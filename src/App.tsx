@@ -98,11 +98,11 @@ const LandingPage = () => {
                     Get Started
                   </button>
                 </div>
-                <div className="mt-3 rounded-md shadow sm:mt-0 sm:ml-3">
+                {/* <div className="mt-3 rounded-md shadow sm:mt-0 sm:ml-3">
                   <a href="#" className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-blue-500 bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10">
                     Watch Demo
                   </a>
-                </div>
+                </div> */}
               </div>
             </div>
           </section>
@@ -169,6 +169,7 @@ const LandingPage = () => {
         <li className="mb-2">✓ Unlimited forecasts</li>
         <li className="mb-2">✓ Priority customer support</li>
         <li>✓ Regular updates and improvements</li>
+        <li className="mb-2">✓ Cancel Anytime</li>
       </ul>
       <button
         onClick={toggleDemandForecast}

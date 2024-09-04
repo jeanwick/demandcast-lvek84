@@ -2,6 +2,51 @@ import React, { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { BarChart2, Ship, Clock, Inbox, Plus, ChevronRight } from 'lucide-react';
 
+const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const file = event.target.files?.[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const text = e.target?.result as string;
+      const lines = text.split('\n');
+      const newHistoricalData = lines.slice(1).map(line => {
+        const [month, sku1, sku2] = line.split(',');
+        return {
+          month: month.trim(),
+          sku1: parseInt(sku1.trim()),
+          sku2: parseInt(sku2.trim())
+        };
+      }).filter(item => !isNaN(item.sku1) && !isNaN(item.sku2));
+      
+      setHistoricalData(newHistoricalData);
+      setSku1Name('SKU 01');
+      setSku2Name('SKU 02');
+    };
+    reader.readAsText(file);
+  }
+};
+
+const downloadTemplate = () => {
+  const template = [
+    'Month,SKU 01,SKU 02',
+    'Month 1,100,150',
+    'Month 2,120,160',
+    'Month 3,110,155'
+  ].join('\n');
+
+  const blob = new Blob([template], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  if (link.download !== undefined) {
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'demand_forecast_template.csv');
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+};
+
 const Input = ({ label, ...props }) => (
   <div className="mb-4">
     <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
@@ -79,6 +124,7 @@ const DemandForecastApp = () => {
             <Input label="Sailing Time (days)" type="number" value={sailingTime} onChange={(e) => setSailingTime(parseInt(e.target.value))} placeholder="Enter sailing time" />
             <Input label="Port Delays (days)" type="number" value={portDelays} onChange={(e) => setPortDelays(parseInt(e.target.value))} placeholder="Enter port delays" />
           </FeatureCard>
+          
         </div>
 
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
