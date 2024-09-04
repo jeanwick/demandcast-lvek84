@@ -169,6 +169,7 @@ const LandingPage = () => {
         <li className="mb-2">✓ Unlimited forecasts</li>
         <li className="mb-2">✓ Priority customer support</li>
         <li>✓ Regular updates and improvements</li>
+        <li className="mb-2">✓ Cancel Anytime</li>
       </ul>
       <button
         onClick={toggleDemandForecast}
