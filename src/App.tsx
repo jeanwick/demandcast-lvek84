@@ -155,8 +155,8 @@ const LandingPage = () => {
               </div>
             </div>
           </section>
-          <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-  <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-12">Simple Pricing</h2>
+          <section id= "pricing" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+  <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-12">Our Pricing</h2>
   <div className="flex flex-col md:flex-row justify-center items-stretch gap-8">
     {/* Professional Plan */}
     <div className="bg-white rounded-lg shadow-md p-8 w-full max-w-md">
