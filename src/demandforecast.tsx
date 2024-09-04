@@ -1,32 +1,11 @@
 import React, { useState } from 'react';
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from 'recharts';
-import {
-  BarChart2,
-  Ship,
-  Clock,
-  Inbox,
-  Plus,
-  ChevronRight,
-} from 'lucide-react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { BarChart2, Ship, Clock, Inbox, Plus, ChevronRight } from 'lucide-react';
 
 const Input = ({ label, ...props }) => (
   <div className="mb-4">
-    <label className="block text-sm font-medium text-gray-700 mb-1">
-      {label}
-    </label>
-    <input
-      {...props}
-      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-    />
+    <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+    <input {...props} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
   </div>
 );
 
@@ -47,9 +26,9 @@ const FeatureCard = ({ icon: Icon, title, children }) => (
   </div>
 );
 
-const DemandForecast = () => {
-  const [sku1Name, setSku1Name] = useState('');
-  const [sku2Name, setSku2Name] = useState('');
+const DemandForecastApp = () => {
+  const [sku1Name, setSku1Name] = useState('SKU 01');
+  const [sku2Name, setSku2Name] = useState('SKU 02');
   const [historicalData, setHistoricalData] = useState([
     { month: 'Month 1', sku1: 100, sku2: 150 },
     { month: 'Month 2', sku1: 120, sku2: 160 },
@@ -61,14 +40,11 @@ const DemandForecast = () => {
   const [forecastData, setForecastData] = useState([]);
 
   const handleAddHistoricalData = () => {
-    setHistoricalData([
-      ...historicalData,
-      {
-        month: `Month ${historicalData.length + 1}`,
-        sku1: 0,
-        sku2: 0,
-      },
-    ]);
+    setHistoricalData([...historicalData, {
+      month: `Month ${historicalData.length + 1}`,
+      sku1: 0,
+      sku2: 0
+    }]);
   };
 
   const handleUpdateHistoricalData = (index, sku, value) => {
@@ -79,67 +55,29 @@ const DemandForecast = () => {
 
   const handleForecast = () => {
     // Placeholder for actual forecasting logic
-    const newForecastData = historicalData.concat(
-      [...Array(forecastPeriods)].map((_, i) => ({
-        month: `Month ${historicalData.length + i + 1}`,
-        sku1: Math.floor(
-          historicalData[i % historicalData.length].sku1 * 1.05 +
-            (Math.random() * 50 - 25)
-        ),
-        sku2: Math.floor(
-          historicalData[i % historicalData.length].sku2 * 1.03 +
-            (Math.random() * 40 - 20)
-        ),
-      }))
-    );
+    const newForecastData = historicalData.concat([...Array(forecastPeriods)].map((_, i) => ({
+      month: `Month ${historicalData.length + i + 1}`,
+      sku1: Math.floor((historicalData[i % historicalData.length].sku1 * 1.05) + (Math.random() * 50 - 25)),
+      sku2: Math.floor((historicalData[i % historicalData.length].sku2 * 1.03) + (Math.random() * 40 - 20)),
+    })));
     setForecastData(newForecastData);
   };
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-extrabold text-gray-900 text-center mb-8">
-          Advanced Demand Forecasting
-        </h1>
-
+        <h1 className="text-3xl font-extrabold text-gray-900 text-center mb-8">Advanced Demand Forecasting</h1>
+        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
           <FeatureCard icon={Inbox} title="SKU Information">
-            <Input
-              label="SKU 1 Name"
-              value={sku1Name}
-              onChange={(e) => setSku1Name(e.target.value)}
-              placeholder="Enter SKU 1 name"
-            />
-            <Input
-              label="SKU 2 Name"
-              value={sku2Name}
-              onChange={(e) => setSku2Name(e.target.value)}
-              placeholder="Enter SKU 2 name"
-            />
+            <Input label="SKU 1 Name" value={sku1Name} onChange={(e) => setSku1Name(e.target.value)} placeholder="Enter SKU 1 name" />
+            <Input label="SKU 2 Name" value={sku2Name} onChange={(e) => setSku2Name(e.target.value)} placeholder="Enter SKU 2 name" />
           </FeatureCard>
-
+          
           <FeatureCard icon={BarChart2} title="Forecast Configuration">
-            <Input
-              label="Forecast Periods"
-              type="number"
-              value={forecastPeriods}
-              onChange={(e) => setForecastPeriods(parseInt(e.target.value))}
-              placeholder="Number of periods"
-            />
-            <Input
-              label="Sailing Time (days)"
-              type="number"
-              value={sailingTime}
-              onChange={(e) => setSailingTime(parseInt(e.target.value))}
-              placeholder="Enter sailing time"
-            />
-            <Input
-              label="Port Delays (days)"
-              type="number"
-              value={portDelays}
-              onChange={(e) => setPortDelays(parseInt(e.target.value))}
-              placeholder="Enter port delays"
-            />
+            <Input label="Forecast Periods" type="number" value={forecastPeriods} onChange={(e) => setForecastPeriods(parseInt(e.target.value))} placeholder="Number of periods" />
+            <Input label="Sailing Time (days)" type="number" value={sailingTime} onChange={(e) => setSailingTime(parseInt(e.target.value))} placeholder="Enter sailing time" />
+            <Input label="Port Delays (days)" type="number" value={portDelays} onChange={(e) => setPortDelays(parseInt(e.target.value))} placeholder="Enter port delays" />
           </FeatureCard>
         </div>
 
@@ -150,8 +88,8 @@ const DemandForecast = () => {
               <thead>
                 <tr className="bg-gray-50">
                   <th className="px-4 py-2">Month</th>
-                  <th className="px-4 py-2">SKU 1 Demand</th>
-                  <th className="px-4 py-2">SKU 2 Demand</th>
+                  <th className="px-4 py-2">{sku1Name} Demand</th>
+                  <th className="px-4 py-2">{sku2Name} Demand</th>
                 </tr>
               </thead>
               <tbody>
@@ -162,13 +100,7 @@ const DemandForecast = () => {
                       <input
                         type="number"
                         value={data.sku1}
-                        onChange={(e) =>
-                          handleUpdateHistoricalData(
-                            index,
-                            'sku1',
-                            e.target.value
-                          )
-                        }
+                        onChange={(e) => handleUpdateHistoricalData(index, 'sku1', e.target.value)}
                         className="w-full px-2 py-1 border border-gray-300 rounded"
                       />
                     </td>
@@ -176,13 +108,7 @@ const DemandForecast = () => {
                       <input
                         type="number"
                         value={data.sku2}
-                        onChange={(e) =>
-                          handleUpdateHistoricalData(
-                            index,
-                            'sku2',
-                            e.target.value
-                          )
-                        }
+                        onChange={(e) => handleUpdateHistoricalData(index, 'sku2', e.target.value)}
                         className="w-full px-2 py-1 border border-gray-300 rounded"
                       />
                     </td>
@@ -212,18 +138,8 @@ const DemandForecast = () => {
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Line
-                  type="monotone"
-                  dataKey="sku1"
-                  stroke="#8884d8"
-                  name={sku1Name || 'SKU 1'}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="sku2"
-                  stroke="#82ca9d"
-                  name={sku2Name || 'SKU 2'}
-                />
+                <Line type="monotone" dataKey="sku1" stroke="#8884d8" name={sku1Name} />
+                <Line type="monotone" dataKey="sku2" stroke="#82ca9d" name={sku2Name} />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -233,4 +149,4 @@ const DemandForecast = () => {
   );
 };
 
-export default DemandForecast;
+export default DemandForecastApp;
