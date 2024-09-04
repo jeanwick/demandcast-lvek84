@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { BarChart2, Anchor, Clock, Box, ChevronRight, Menu, X, ArrowLeft } from 'lucide-react';
+import HowItWorksSection from './howitworks';
 
 // Import the DemandForecast component
 import DemandForecast from './demandforecast';
@@ -131,8 +132,8 @@ const LandingPage = () => {
               />
             </div>
           </section>
-
-          <section id="how-it-works" className="bg-gray-50 py-20">
+          <HowItWorksSection/>
+          {/* <section id="how-it-works" className="bg-gray-50 py-20">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-12">How It Works</h2>
               <div className="max-w-3xl mx-auto">
@@ -154,7 +155,8 @@ const LandingPage = () => {
                 ))}
               </div>
             </div>
-          </section>
+          </section> */}
+          
           <section id= "pricing" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
   <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-12">Our Pricing</h2>
   <div className="flex flex-col md:flex-row justify-center items-stretch gap-8">
