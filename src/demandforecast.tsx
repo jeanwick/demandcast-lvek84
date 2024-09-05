@@ -66,6 +66,10 @@ const DemandForecastApp = () => {
         <h1 className="text-3xl font-extrabold text-gray-900 text-center mb-8">Demand Forecasting</h1>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+        <FeatureCard icon={Plus} title="Lead Time Analysis">
+            <LeadTimeAnalysis />
+          </FeatureCard>
+          
           <FeatureCard icon={Inbox} title="SKU Information">
             <Input label="SKU 1 Name" value={sku1Name} onChange={(e: ChangeEvent<HTMLInputElement>) => setSku1Name(e.target.value)} placeholder="Enter SKU 1 name" />
             <Input label="SKU 2 Name" value={sku2Name} onChange={(e: ChangeEvent<HTMLInputElement>) => setSku2Name(e.target.value)} placeholder="Enter SKU 2 name" />
@@ -77,9 +81,6 @@ const DemandForecastApp = () => {
             <Input label="Port Delays (days)" type="number" value={portDelays} onChange={(e: ChangeEvent<HTMLInputElement>) => setPortDelays(parseInt(e.target.value))} placeholder="Enter port delays" />
           </FeatureCard>
 
-          <FeatureCard icon={Plus} title="Lead Time Analysis">
-            <LeadTimeAnalysis />
-          </FeatureCard>
         </div>
 
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
