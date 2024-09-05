@@ -7,6 +7,8 @@ import NavigationBar from './nav';
 import CallToAction from './calltoaction';
 import DemandForecast from './demandforecast';
 
+
+
 const LandingPage = () => {
   const [showDemandForecast, setShowDemandForecast] = useState(false);
 
@@ -59,6 +61,7 @@ const LandingPage = () => {
               throw new Error('Function not implemented.');
             }} />
           <CallToAction toggleDemandForecast={toggleDemandForecast} />
+
         </main>
       )}
 
