@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import HowItWorksSection from './howitworks';
 import Pricing from './pricing';
@@ -55,7 +55,7 @@ const LandingPage = () => {
 
           <Features />
           <HowItWorksSection />
-          <Pricing toggleDemandForecast={function (): void {
+          <Pricing toggleDemandForecast={() => {
               throw new Error('Function not implemented.');
             }} />
           <CallToAction toggleDemandForecast={toggleDemandForecast} />

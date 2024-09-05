@@ -1,5 +1,4 @@
 import React from 'react';
-import { Icon as IconType } from 'lucide-react'; // Import specific icon type if needed
 
 interface FeatureCardProps {
   icon: React.ElementType; // Using React.ElementType to accept any component

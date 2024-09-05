@@ -1,9 +1,8 @@
 import { FC } from 'react';
-import { Anchor, BarChart, CheckCircle, Clock, Database, Edit, LucideIcon } from 'lucide-react'; // Import the correct type for lucide icons
-import React from 'react';
+import { Anchor, BarChart, CheckCircle, Clock, Database, Edit } from 'lucide-react'; // Ensure correct imports
 
 interface HowItWorksStepProps {
-  icon: LucideIcon; // Define the type of icon
+  icon: React.ElementType;  // Use React.ElementType for component types
   title: string;
   description: string;
 }
