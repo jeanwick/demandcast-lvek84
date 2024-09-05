@@ -1,6 +1,6 @@
 import React, { useState, ChangeEvent } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { BarChart2, Inbox, Plus, ChevronRight, DollarSign, Ship, Clock } from 'lucide-react';
+import { BarChart2, Inbox, Plus, ChevronRight, DollarSign} from 'lucide-react';
 import LeadTimeAnalysis from './leadtime';
 
 const Input = ({ label, ...props }: { label: string, [key: string]: any }) => (
