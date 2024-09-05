@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, ChangeEvent } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { BarChart2, Inbox, Plus, ChevronRight } from 'lucide-react';
 import LeadTimeAnalysis from './leadtime';
@@ -11,10 +11,7 @@ const Input = ({ label, ...props }: { label: string, [key: string]: any }) => (
 );
 
 const Button = ({ children, ...props }: { children: React.ReactNode, [key: string]: any }) => (
-  <button
-    {...props}
-    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-  >
+  <button {...props} className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
     {children}
   </button>
 );
@@ -70,14 +67,14 @@ const DemandForecastApp = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
           <FeatureCard icon={Inbox} title="SKU Information">
-            <Input label="SKU 1 Name" value={sku1Name} onChange={(e) => setSku1Name(e.target.value)} placeholder="Enter SKU 1 name" />
-            <Input label="SKU 2 Name" value={sku2Name} onChange={(e) => setSku2Name(e.target.value)} placeholder="Enter SKU 2 name" />
+            <Input label="SKU 1 Name" value={sku1Name} onChange={(e: ChangeEvent<HTMLInputElement>) => setSku1Name(e.target.value)} placeholder="Enter SKU 1 name" />
+            <Input label="SKU 2 Name" value={sku2Name} onChange={(e: ChangeEvent<HTMLInputElement>) => setSku2Name(e.target.value)} placeholder="Enter SKU 2 name" />
           </FeatureCard>
           
           <FeatureCard icon={BarChart2} title="Forecast Configuration">
-            <Input label="Forecast Periods" type="number" value={forecastPeriods} onChange={(e) => setForecastPeriods(parseInt(e.target.value))} placeholder="Number of periods" />
-            <Input label="Sailing Time (days)" type="number" value={sailingTime} onChange={(e) => setSailingTime(parseInt(e.target.value))} placeholder="Enter sailing time" />
-            <Input label="Port Delays (days)" type="number" value={portDelays} onChange={(e) => setPortDelays(parseInt(e.target.value))} placeholder="Enter port delays" />
+            <Input label="Forecast Periods" type="number" value={forecastPeriods} onChange={(e: ChangeEvent<HTMLInputElement>) => setForecastPeriods(parseInt(e.target.value))} placeholder="Number of periods" />
+            <Input label="Sailing Time (days)" type="number" value={sailingTime} onChange={(e: ChangeEvent<HTMLInputElement>) => setSailingTime(parseInt(e.target.value))} placeholder="Enter sailing time" />
+            <Input label="Port Delays (days)" type="number" value={portDelays} onChange={(e: ChangeEvent<HTMLInputElement>) => setPortDelays(parseInt(e.target.value))} placeholder="Enter port delays" />
           </FeatureCard>
 
           <FeatureCard icon={Plus} title="Lead Time Analysis">
@@ -104,7 +101,7 @@ const DemandForecastApp = () => {
                       <input
                         type="number"
                         value={data.sku1}
-                        onChange={(e) => handleUpdateHistoricalData(index, 'sku1', e.target.value)}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => handleUpdateHistoricalData(index, 'sku1', e.target.value)}
                         className="w-full px-2 py-1 border border-gray-300 rounded"
                       />
                     </td>
@@ -112,7 +109,7 @@ const DemandForecastApp = () => {
                       <input
                         type="number"
                         value={data.sku2}
-                        onChange={(e) => handleUpdateHistoricalData(index, 'sku2', e.target.value)}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => handleUpdateHistoricalData(index, 'sku2', e.target.value)}
                         className="w-full px-2 py-1 border border-gray-300 rounded"
                       />
                     </td>
