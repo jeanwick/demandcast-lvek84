@@ -1,7 +1,14 @@
+import { FC } from 'react';
+import { Anchor, BarChart, CheckCircle, Clock, Database, Edit, LucideIcon } from 'lucide-react'; // Import the correct type for lucide icons
 import React from 'react';
-import { Edit, Database, Anchor, Clock, BarChart, CheckCircle } from 'lucide-react';
 
-const HowItWorksStep = ({ icon: Icon, title, description }) => (
+interface HowItWorksStepProps {
+  icon: LucideIcon; // Define the type of icon
+  title: string;
+  description: string;
+}
+
+const HowItWorksStep: FC<HowItWorksStepProps> = ({ icon: Icon, title, description }) => (
   <div className="flex flex-col items-center text-center md:flex-row md:text-left md:items-start mb-8">
     <div className="flex-shrink-0 mb-4 md:mb-0 md:mr-6">
       <div className="bg-blue-100 rounded-full p-4">

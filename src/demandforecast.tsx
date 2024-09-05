@@ -1,60 +1,16 @@
 import React, { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { BarChart2, Ship, Clock, Inbox, Plus, ChevronRight } from 'lucide-react';
+import { BarChart2, Inbox, Plus, ChevronRight } from 'lucide-react';
+import LeadTimeAnalysis from './leadtime';
 
-const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-  const file = event.target.files?.[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const text = e.target?.result as string;
-      const lines = text.split('\n');
-      const newHistoricalData = lines.slice(1).map(line => {
-        const [month, sku1, sku2] = line.split(',');
-        return {
-          month: month.trim(),
-          sku1: parseInt(sku1.trim()),
-          sku2: parseInt(sku2.trim())
-        };
-      }).filter(item => !isNaN(item.sku1) && !isNaN(item.sku2));
-      
-      setHistoricalData(newHistoricalData);
-      setSku1Name('SKU 01');
-      setSku2Name('SKU 02');
-    };
-    reader.readAsText(file);
-  }
-};
-
-const downloadTemplate = () => {
-  const template = [
-    'Month,SKU 01,SKU 02',
-    'Month 1,100,150',
-    'Month 2,120,160',
-    'Month 3,110,155'
-  ].join('\n');
-
-  const blob = new Blob([template], { type: 'text/csv;charset=utf-8;' });
-  const link = document.createElement('a');
-  if (link.download !== undefined) {
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', 'demand_forecast_template.csv');
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }
-};
-
-const Input = ({ label, ...props }) => (
+const Input = ({ label, ...props }: { label: string, [key: string]: any }) => (
   <div className="mb-4">
     <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
     <input {...props} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
   </div>
 );
 
-const Button = ({ children, ...props }) => (
+const Button = ({ children, ...props }: { children: React.ReactNode, [key: string]: any }) => (
   <button
     {...props}
     className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
@@ -63,7 +19,7 @@ const Button = ({ children, ...props }) => (
   </button>
 );
 
-const FeatureCard = ({ icon: Icon, title, children }) => (
+const FeatureCard = ({ icon: Icon, title, children }: { icon: React.ElementType, title: string, children: React.ReactNode }) => (
   <div className="bg-white rounded-lg shadow-md p-6">
     <Icon className="w-8 h-8 text-blue-500 mb-4" />
     <h3 className="text-lg font-semibold mb-2">{title}</h3>
@@ -82,7 +38,7 @@ const DemandForecastApp = () => {
   const [forecastPeriods, setForecastPeriods] = useState(3);
   const [sailingTime, setSailingTime] = useState(30);
   const [portDelays, setPortDelays] = useState(5);
-  const [forecastData, setForecastData] = useState([]);
+  const [forecastData, setForecastData] = useState<any[]>([]);
 
   const handleAddHistoricalData = () => {
     setHistoricalData([...historicalData, {
@@ -92,14 +48,13 @@ const DemandForecastApp = () => {
     }]);
   };
 
-  const handleUpdateHistoricalData = (index, sku, value) => {
+  const handleUpdateHistoricalData = (index: number, sku: 'sku1' | 'sku2', value: string) => {
     const newData = [...historicalData];
     newData[index][sku] = parseInt(value) || 0;
     setHistoricalData(newData);
   };
 
   const handleForecast = () => {
-    // Placeholder for actual forecasting logic
     const newForecastData = historicalData.concat([...Array(forecastPeriods)].map((_, i) => ({
       month: `Month ${historicalData.length + i + 1}`,
       sku1: Math.floor((historicalData[i % historicalData.length].sku1 * 1.05) + (Math.random() * 50 - 25)),
@@ -111,7 +66,7 @@ const DemandForecastApp = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-extrabold text-gray-900 text-center mb-8">Advanced Demand Forecasting</h1>
+        <h1 className="text-3xl font-extrabold text-gray-900 text-center mb-8">Demand Forecasting</h1>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
           <FeatureCard icon={Inbox} title="SKU Information">
@@ -124,7 +79,10 @@ const DemandForecastApp = () => {
             <Input label="Sailing Time (days)" type="number" value={sailingTime} onChange={(e) => setSailingTime(parseInt(e.target.value))} placeholder="Enter sailing time" />
             <Input label="Port Delays (days)" type="number" value={portDelays} onChange={(e) => setPortDelays(parseInt(e.target.value))} placeholder="Enter port delays" />
           </FeatureCard>
-          
+
+          <FeatureCard icon={Plus} title="Lead Time Analysis">
+            <LeadTimeAnalysis />
+          </FeatureCard>
         </div>
 
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
