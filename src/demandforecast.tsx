@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { BarChart2, Inbox, Plus, ChevronRight } from 'lucide-react';
+import LeadTimeAnalysis from './leadtime';
 
 const Input = ({ label, ...props }: { label: string, [key: string]: any }) => (
   <div className="mb-4">
@@ -65,7 +66,7 @@ const DemandForecastApp = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-extrabold text-gray-900 text-center mb-8">Advanced Demand Forecasting</h1>
+        <h1 className="text-3xl font-extrabold text-gray-900 text-center mb-8">Demand Forecasting</h1>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
           <FeatureCard icon={Inbox} title="SKU Information">
@@ -78,7 +79,10 @@ const DemandForecastApp = () => {
             <Input label="Sailing Time (days)" type="number" value={sailingTime} onChange={(e) => setSailingTime(parseInt(e.target.value))} placeholder="Enter sailing time" />
             <Input label="Port Delays (days)" type="number" value={portDelays} onChange={(e) => setPortDelays(parseInt(e.target.value))} placeholder="Enter port delays" />
           </FeatureCard>
-          
+
+          <FeatureCard icon={Plus} title="Lead Time Analysis">
+            <LeadTimeAnalysis />
+          </FeatureCard>
         </div>
 
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
