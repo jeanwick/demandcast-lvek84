@@ -1,27 +1,22 @@
 import React, { useState } from 'react';
-import { BarChart2, Anchor, Clock, Box, ChevronRight, Menu, X, ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import HowItWorksSection from './howitworks';
 import Pricing from './pricing';
 import Features from './features';
 import NavigationBar from './nav';
 import CallToAction from './calltoaction';
-
-
-// Import the DemandForecast component
 import DemandForecast from './demandforecast';
 
 const LandingPage = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showDemandForecast, setShowDemandForecast] = useState(false);
 
   const toggleDemandForecast = () => {
     setShowDemandForecast(!showDemandForecast);
-    setIsMenuOpen(false);
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
-     <NavigationBar toggleDemandForecast={toggleDemandForecast} showDemandForecast={showDemandForecast} />
+      <NavigationBar toggleDemandForecast={toggleDemandForecast} showDemandForecast={showDemandForecast} />
 
       {showDemandForecast ? (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -54,21 +49,15 @@ const LandingPage = () => {
                     Get Started
                   </button>
                 </div>
-                {/* <div className="mt-3 rounded-md shadow sm:mt-0 sm:ml-3">
-                  <a href="#" className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-blue-500 bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10">
-                    Watch Demo
-                  </a>
-                </div> */}
               </div>
             </div>
           </section>
 
           <Features />
-          <HowItWorksSection/>
+          <HowItWorksSection />
           <Pricing toggleDemandForecast={function (): void {
               throw new Error('Function not implemented.');
-            } }/>
-
+            }} />
           <CallToAction toggleDemandForecast={toggleDemandForecast} />
         </main>
       )}
