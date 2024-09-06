@@ -4,6 +4,24 @@ import SKUAndLeadTimeManagement from './components/SKUAndLeadTimeManagement';
 import SupplyChainCosts from './components/SupplyChainCosts';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
+// Define ForecastData with a specific 'month' as a string and SKU names as dynamic keys that hold numbers
+interface ForecastData {
+  month: string;
+  [skuName: string]: number | string; // Allow 'month' as a string and SKU names as dynamic keys with number values
+}
+
+interface OptimizationResult {
+  skuName: string;
+  EOQ: number;
+  reorderPoint: number;
+  totalLeadTime: number;
+}
+
+interface Recommendation {
+  skuName: string;
+  recommendation: string;
+}
+
 const DemandForecast: React.FC = () => {
   const [forecastConfig, setForecastConfig] = useState({
     sailingTime: 30,
@@ -18,34 +36,30 @@ const DemandForecast: React.FC = () => {
     orderCost: 200,
   });
 
-  const [forecastData, setForecastData] = useState<any[]>([]);
+  const [forecastData, setForecastData] = useState<ForecastData[]>([]);
 
   // Handle generating the forecast with Exponential Smoothing
   const handleForecast = () => {
-    const totalTime = forecastConfig.sailingTime + forecastConfig.portDelays;
     const forecastPeriods = forecastConfig.forecastPeriods;  // Get forecast periods from configuration
 
     const alpha = 0.2; // Smoothing factor for Exponential Smoothing (between 0 and 1)
-
-    // Log SKU data to inspect the structure
-    console.log('SKU Data:', skuData);
 
     // Initialize an array of months, including future forecast periods
     const months = Array.from({ length: forecastPeriods }, (_, index) => `Month ${index + 1}`);
 
     // Create forecast data structure where each object represents a month and contains the demand for each SKU
-    const newForecastData = months.map((month, monthIndex) => {
-      const monthData: { month: string; [skuName: string]: number } = { month };
+    const newForecastData: ForecastData[] = months.map((month, monthIndex) => {
+      const monthData: ForecastData = { month };  // 'month' is explicitly typed as a string
 
       // For each SKU, add its demand for the current month
-      skuData.forEach((sku) => {
+      skuData.forEach((sku: any) => {
         if (sku.skuName && sku.historicalData) {
           if (sku.historicalData[monthIndex]) {
             // Use user-entered demand for this SKU and month if available
             monthData[sku.skuName] = sku.historicalData[monthIndex].value;
           } else {
             // Exponential smoothing logic for forecasting future periods
-            const historicalData = sku.historicalData.map((data) => data.value);
+            const historicalData = sku.historicalData.map((data: { value: number }) => data.value);
 
             // Initialize the first smoothed value using the first historical value
             let smoothedValue = historicalData[0];
@@ -71,9 +85,9 @@ const DemandForecast: React.FC = () => {
   };
 
   // Function to calculate Economic Order Quantity (EOQ), Reorder Point, and Total Lead Time
-  const calculateOptimizationResults = () => {
-    const results = skuData.map((sku) => {
-      const demandRate = sku.historicalData.reduce((total, entry) => total + entry.value, 0) / sku.historicalData.length; // Average demand rate
+  const calculateOptimizationResults = (): OptimizationResult[] => {
+    return skuData.map((sku: any) => {
+      const demandRate = sku.historicalData.reduce((total: number, entry: { value: number }) => total + entry.value, 0) / sku.historicalData.length; // Average demand rate
       const orderingCost = supplyChainCosts.orderCost;
       const holdingCost = supplyChainCosts.holdingCost;
 
@@ -92,14 +106,12 @@ const DemandForecast: React.FC = () => {
         totalLeadTime,
       };
     });
-
-    return results;
   };
 
   const optimizationResults = calculateOptimizationResults(); // Get optimization results
 
   // Function to generate recommendations based on optimization results
-  const generateRecommendations = () => {
+  const generateRecommendations = (): Recommendation[] => {
     return optimizationResults.map((result) => {
       let recommendation = '';
 
@@ -188,9 +200,7 @@ const DemandForecast: React.FC = () => {
           <h2 className="text-xl font-semibold mb-4">Supply Chain Optimization Results</h2>
           <table className="min-w-full divide-y divide-gray-200">
             <thead>
-              <tr
-
->
+              <tr>
                 <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   SKU
                 </th>
