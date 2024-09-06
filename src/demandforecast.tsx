@@ -85,7 +85,7 @@ const DemandForecast: React.FC = () => {
         month: `Month ${historicalData.length + i + 1}`,
       };
       supplierSKUEntries.forEach(entry => {
-        const lastValue = historicalData[historicalData.length - 1][entry.sku] as number;
+        const lastValue = Number(historicalData[historicalData.length - 1][entry.sku]) || 0;
         newDataPoint[entry.sku] = Math.floor(lastValue * (1 + (Math.random() * 0.2 - 0.1)));
       });
       return newDataPoint;
@@ -188,7 +188,7 @@ const DemandForecast: React.FC = () => {
                       <td key={entry.id} className="px-4 py-2">
                         <input
                           type="number"
-                          value={data[entry.sku] as number}
+                          value={Number(data[entry.sku])}
                           onChange={(e) => handleUpdateHistoricalData(index, entry.sku, e.target.value)}
                           className="w-full px-2 py-1 border border-gray-300 rounded"
                         />
@@ -253,7 +253,7 @@ const DemandForecast: React.FC = () => {
                     <div>
                       <p className="font-medium">Total Lead Time</p>
                       <p className="text-2xl font-bold">
-                        {(updatedSku.manufacturingTime || 0) + (updatedSku.leadTime || 0) + sailingTime + portDelays} days
+                        {(Number(updatedSku.manufacturingTime) || 0) + (Number(updatedSku.leadTime) || 0) + sailingTime + portDelays} days
                       </p>
                     </div>
                   </div>
@@ -270,7 +270,7 @@ const DemandForecast: React.FC = () => {
                 return (
                   <li key={sku.id}>
                     For {sku.sku}: Order {calculateEOQ(updatedSku).toFixed(0)} units when inventory reaches {calculateReorderPoint(updatedSku)} units.
-                    Total lead time is {(updatedSku.manufacturingTime || 0) + (updatedSku.leadTime || 0) + sailingTime + portDelays} days.
+                    Total lead time is {(Number(updatedSku.manufacturingTime) || 0) + (Number(updatedSku.leadTime) || 0) + sailingTime + portDelays} days.
                   </li>
                 );
               })}
