@@ -1,80 +1,106 @@
-import React, { useState, ChangeEvent } from 'react';
-import { X, Plus } from 'lucide-react';  // Ensure Plus is imported along with X
+import React, { useState, useEffect } from 'react';
+import { Plus, Trash2 } from 'lucide-react';
 
-interface SupplierLeadTime {
-  supplierName: string;
-  leadTimeDays: number;
+export interface SupplierSKUEntry {
+  id: number;
+  supplier: string;
+  sku: string;
+  manufacturingTime: number;
+  leadTime: number;
 }
 
-const LeadTimeAnalysis: React.FC = () => {
-  const [supplierLeadTimes, setSupplierLeadTimes] = useState<SupplierLeadTime[]>([]);
-  const [newSupplierName, setNewSupplierName] = useState('');
-  const [newLeadTimeDays, setNewLeadTimeDays] = useState('');
+interface Props {
+  onEntriesChange: (entries: SupplierSKUEntry[]) => void;
+}
 
-  const handleAddLeadTime = () => {
-    if (newSupplierName && newLeadTimeDays) {
-      const newEntry: SupplierLeadTime = {
-        supplierName: newSupplierName,
-        leadTimeDays: parseInt(newLeadTimeDays, 10)
-      };
-      setSupplierLeadTimes(prevTimes => [...prevTimes, newEntry]);
-      setNewSupplierName('');
-      setNewLeadTimeDays('');
+const LeadTimeAnalysis: React.FC<Props> = ({ onEntriesChange }) => {
+  const [entries, setEntries] = useState<SupplierSKUEntry[]>([
+    { id: 1, supplier: '', sku: '', manufacturingTime: 0, leadTime: 0 }
+  ]);
+
+  useEffect(() => {
+    onEntriesChange(entries);
+  }, [entries, onEntriesChange]);
+
+  const handleAddEntry = () => {
+    const newId = entries.length > 0 ? Math.max(...entries.map(e => e.id)) + 1 : 1;
+    setEntries([...entries, { id: newId, supplier: '', sku: '', manufacturingTime: 0, leadTime: 0 }]);
+  };
+
+  const handleRemoveEntry = (id: number) => {
+    if (entries.length > 1) {
+      setEntries(entries.filter(entry => entry.id !== id));
     }
   };
 
-  const handleSupplierNameChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setNewSupplierName(event.target.value);
-  };
-
-  const handleLeadTimeDaysChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setNewLeadTimeDays(event.target.value);
-  };
-
-  const handleDeleteLeadTime = (index: number) => {
-    const updatedLeadTimes = supplierLeadTimes.filter((_, idx) => idx !== index);
-    setSupplierLeadTimes(updatedLeadTimes);
+  const handleInputChange = (id: number, field: keyof SupplierSKUEntry, value: string | number) => {
+    setEntries(entries.map(entry =>
+      entry.id === id ? { ...entry, [field]: field === 'supplier' || field === 'sku' ? value : Number(value) } : entry
+    ));
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <div className="flex flex-col md:flex-row justify-center gap-4 mb-6">
-        <input
-          type="text"
-          placeholder="Supplier Name"
-          value={newSupplierName}
-          onChange={handleSupplierNameChange}
-          className="form-input px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        />
-        <input
-          type="number"
-          placeholder="Lead Time in Days"
-          value={newLeadTimeDays}
-          onChange={handleLeadTimeDaysChange}
-          className="form-input px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        />
-        <button
-          onClick={handleAddLeadTime}
-          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center justify-center"
-        >
-          <Plus className="w-5 h-5" />  {/* Adjusted for visual balance */}
-        </button>
-      </div>
-      <h2 className="text-xl font-semibold mb-4">Current Supplier Lead Times</h2>
-      <ul>
-        {supplierLeadTimes.map((leadTime, index) => (
-          <li key={index} className="bg-white shadow rounded-lg p-4 mb-4 flex justify-between items-center">
-            {`${leadTime.supplierName}: ${leadTime.leadTimeDays} days`}
-            <button 
-              onClick={() => handleDeleteLeadTime(index)}
-              className="text-red-500 hover:text-red-700 focus:outline-none"
-              aria-label="Delete"
+    <div className="space-y-4">
+      {entries.map((entry) => (
+        <div key={entry.id} className="bg-white p-4 rounded-lg shadow">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Supplier</label>
+              <input
+                type="text"
+                value={entry.supplier}
+                onChange={(e) => handleInputChange(entry.id, 'supplier', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Enter supplier name"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">SKU</label>
+              <input
+                type="text"
+                value={entry.sku}
+                onChange={(e) => handleInputChange(entry.id, 'sku', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Enter SKU"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Manufacturing Time (days)</label>
+              <input
+                type="number"
+                value={entry.manufacturingTime}
+                onChange={(e) => handleInputChange(entry.id, 'manufacturingTime', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Enter manufacturing time"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Lead Time (days)</label>
+              <input
+                type="number"
+                value={entry.leadTime}
+                onChange={(e) => handleInputChange(entry.id, 'leadTime', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Enter lead time"
+              />
+            </div>
+          </div>
+          {entries.length > 1 && (
+            <button
+              onClick={() => handleRemoveEntry(entry.id)}
+              className="mt-2 text-red-600 hover:text-red-800 flex items-center"
             >
-              <X className="w-4 h-4" />
+              <Trash2 className="w-4 h-4 mr-1" /> Remove
             </button>
-          </li>
-        ))}
-      </ul>
+          )}
+        </div>
+      ))}
+      <button
+        onClick={handleAddEntry}
+        className="mt-4 flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+      >
+        <Plus className="w-4 h-4 mr-2" /> Add Supplier/SKU
+      </button>
     </div>
   );
 };
