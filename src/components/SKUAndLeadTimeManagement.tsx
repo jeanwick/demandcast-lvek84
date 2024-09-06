@@ -68,107 +68,114 @@ const SKUAndLeadTimeManagement: React.FC<SKUAndLeadTimeManagementProps> = ({ onS
 
   return (
     <div className="container mx-auto p-6">
-      <h2 className="text-3xl font-bold mb-6 text-gray-800">SKU and Lead Time Management</h2>
+      <div className="bg-white p-6 rounded-lg shadow-lg">
+        <h2 className="text-2xl font-bold mb-6 text-gray-800">SKU and Lead Time Management</h2>
 
-      {/* Form to Add SKU */}
-      <div className="mb-6 bg-white p-6 rounded-lg shadow-lg">
-        <h3 className="text-xl font-semibold mb-4 text-gray-700">Add New SKU</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <input
-            type="text"
-            placeholder="SKU Name"
-            value={newSKUName}
-            onChange={(e) => setNewSKUName(e.target.value)}
-            className="form-input px-4 py-2 border rounded-md"
-          />
-          <input
-            type="text"
-            placeholder="Supplier Name"
-            value={newSupplierName}
-            onChange={(e) => setNewSupplierName(e.target.value)}
-            className="form-input px-4 py-2 border rounded-md"
-          />
-          <input
-            type="number"
-            placeholder="Lead Time (Days)"
-            value={newLeadTimeDays}
-            onChange={(e) => setNewLeadTimeDays(Number(e.target.value))}
-            className="form-input px-4 py-2 border rounded-md"
-          />
-        </div>
-        <button
-          onClick={handleAddSKU}
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-        >
-          <Plus className="inline-block w-4 h-4" /> Add SKU
-        </button>
-      </div>
-
-      {/* Button to Add More Months */}
-      {skus.length > 0 && (
-        <div className="mb-4">
+        {/* Form to Add SKU */}
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold mb-4 text-gray-700">Add New SKU</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <input
+              type="text"
+              placeholder="SKU Name"
+              value={newSKUName}
+              onChange={(e) => setNewSKUName(e.target.value)}
+              className="form-input px-4 py-2 border rounded-md"
+            />
+            <input
+              type="text"
+              placeholder="Supplier Name"
+              value={newSupplierName}
+              onChange={(e) => setNewSupplierName(e.target.value)}
+              className="form-input px-4 py-2 border rounded-md"
+            />
+            <input
+              type="number"
+              placeholder="Lead Time (Days)"
+              value={newLeadTimeDays}
+              onChange={(e) => setNewLeadTimeDays(Number(e.target.value))}
+              className="form-input px-4 py-2 border rounded-md"
+            />
+          </div>
           <button
-            onClick={handleAddMonth}
-            className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+            onClick={handleAddSKU}
+            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
           >
-            <Plus className="inline w-4 h-4" /> Add Month
+            <Plus className="inline-block w-4 h-4" /> Add SKU
           </button>
         </div>
-      )}
 
-      {/* Responsive Grid to Display SKUs */}
-      {skus.length > 0 && (
-        <div className="overflow-x-auto">
-          <div
-            className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 font-semibold text-gray-700 text-sm uppercase"
-            style={{
-              display: 'grid',
-              gridTemplateColumns: `repeat(${3 + monthCount + 1}, minmax(100px, 1fr))`,
-            }}
-          >
-            <div>SKU Name</div>
-            <div>Supplier Name</div>
-            <div>Lead Time (Days)</div>
-            {Array.from({ length: monthCount }, (_, i) => (
-              <div key={i}>{`Month ${i + 1}`}</div>
-            ))}
-            <div>Actions</div>
-          </div>
-
-          {skus.map((sku, index) => (
-            <div
-              key={index}
-              className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4"
-              style={{
-                display: 'grid',
-                gridTemplateColumns: `repeat(${3 + monthCount + 1}, minmax(100px, 1fr))`,
-              }}
+        {/* Button to Add More Months */}
+        {skus.length > 0 && (
+          <div className="mb-4">
+            <button
+              onClick={handleAddMonth}
+              className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
             >
-              <div className="px-2 py-1 border border-gray-200">{sku.skuName}</div>
-              <div className="px-2 py-1 border border-gray-200">{sku.supplierName}</div>
-              <div className="px-2 py-1 border border-gray-200">{sku.leadTimeDays}</div>
-              {sku.historicalData.map((data, dataIndex) => (
-                <div key={dataIndex} className="px-2 py-1 border border-gray-200">
-                  <input
-                    type="number"
-                    value={data.value}
-                    onChange={(e) => handleHistoricalDataChange(index, dataIndex, e.target.value)}
-                    className="form-input px-2 py-1 border rounded-md w-full"
-                  />
-                </div>
-              ))}
-              <div className="px-2 py-1 border border-gray-200">
-                <button
-                  onClick={() => handleRemoveSKU(index)}
-                  className="px-2 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 transition-all duration-150"
-                >
-                  <X className="inline w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+              <Plus className="inline w-4 h-4" /> Add Month
+            </button>
+          </div>
+        )}
+
+        {/* Responsive Table to Display SKUs */}
+        {skus.length > 0 && (
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    SKU Name
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Supplier Name
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Lead Time (Days)
+                  </th>
+                  {Array.from({ length: monthCount }, (_, i) => (
+                    <th
+                      key={i}
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      {`Month ${i + 1}`}
+                    </th>
+                  ))}
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {skus.map((sku, index) => (
+                  <tr key={index}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{sku.skuName}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{sku.supplierName}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{sku.leadTimeDays}</td>
+                    {sku.historicalData.map((data, dataIndex) => (
+                      <td key={dataIndex} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <input
+                          type="number"
+                          value={data.value}
+                          onChange={(e) => handleHistoricalDataChange(index, dataIndex, e.target.value)}
+                          className="form-input px-2 py-1 border rounded-md w-full"
+                        />
+                      </td>
+                    ))}
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <button
+                        onClick={() => handleRemoveSKU(index)}
+                        className="px-2 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 transition-all duration-150"
+                      >
+                        <X className="inline w-4 h-4" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
