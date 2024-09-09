@@ -40,7 +40,7 @@ const ForecastConfiguration: React.FC<ForecastConfigurationProps> = ({ onConfigC
       try {
         const response = await axios.get(`https://api.sinay.ai/congestion/api/v1/congestion`, {
           headers: {
-            'API_KEY': 'YOUR_API_KEY',
+            'API_KEY': '6aee23aa-0a6e-4cf7-b801-3a88290c1c51',
             'Content-Type': 'application/json'
           },
           params: { portCode: port }
