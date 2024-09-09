@@ -2,18 +2,12 @@ import React, { useState } from 'react';
 import ForecastConfiguration from './components/ForecastConfiguration';
 import SKUAndLeadTimeManagement from './components/SKUAndLeadTimeManagement';
 import SupplyChainCosts from './components/SupplyChainCosts';
+import EOQCalculator from './components/EOQCalculator'; // Import the EOQ calculator
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 interface ForecastData {
   month: string;
   [skuName: string]: number | string;
-}
-
-interface OptimizationResult {
-  skuName: string;
-  EOQ: number;
-  reorderPoint: number;
-  totalLeadTime: number;
 }
 
 interface Recommendation {
@@ -24,7 +18,7 @@ interface Recommendation {
 const DemandForecast: React.FC = () => {
   const [forecastConfig, setForecastConfig] = useState({
     sailingTime: 30,
-    portDelays: 5,
+    portDelays: 0,
     forecastPeriods: 6,
   });
 
@@ -36,6 +30,8 @@ const DemandForecast: React.FC = () => {
   });
 
   const [forecastData, setForecastData] = useState<ForecastData[]>([]);
+  const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
+  const [optimizationResults, setOptimizationResults] = useState<any[]>([]);
 
   const handleForecast = () => {
     const forecastPeriods = forecastConfig.forecastPeriods;
@@ -67,32 +63,10 @@ const DemandForecast: React.FC = () => {
     setForecastData(newForecastData);
   };
 
-  const calculateOptimizationResults = (): OptimizationResult[] => {
-    return skuData.map((sku: any) => {
-      const demandRate = sku.historicalData.reduce((total: number, entry: { value: number }) => total + entry.value, 0) / sku.historicalData.length;
-      const orderingCost = supplyChainCosts.orderCost;
-      const holdingCost = supplyChainCosts.holdingCost;
-
-      const EOQ = Math.sqrt((2 * demandRate * orderingCost) / holdingCost);
-
-      const dailyDemandRate = demandRate / 30;
-      const totalLeadTime = forecastConfig.sailingTime + forecastConfig.portDelays + sku.leadTimeDays; 
-      const reorderPoint = dailyDemandRate * totalLeadTime;
-
-      return {
-        skuName: sku.skuName,
-        EOQ,
-        reorderPoint,
-        totalLeadTime,
-      };
-    });
-  };
-
-  const optimizationResults = calculateOptimizationResults();
-
-  const generateRecommendations = (): Recommendation[] => {
+  const generateRecommendations = (optimizationResults: any[]): Recommendation[] => {
     return optimizationResults.map((result) => {
       let recommendation = '';
+
       if (result.EOQ > result.reorderPoint) {
         recommendation += `Consider placing larger orders to reduce the number of order cycles. `;
       } else {
@@ -114,8 +88,6 @@ const DemandForecast: React.FC = () => {
     });
   };
 
-  const recommendations = generateRecommendations();
-
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
@@ -126,6 +98,17 @@ const DemandForecast: React.FC = () => {
         <SKUAndLeadTimeManagement onSkuDataChange={setSkuData} />
         <ForecastConfiguration onConfigChange={setForecastConfig} />
         <SupplyChainCosts onCostsChange={setSupplyChainCosts} />
+
+        {/* EOQ Calculator */}
+        <EOQCalculator
+          skuData={skuData}
+          supplyChainCosts={supplyChainCosts}
+          forecastConfig={forecastConfig}
+          onOptimizationResults={(results) => {
+            setOptimizationResults(results);
+            setRecommendations(generateRecommendations(results)); // Generate recommendations
+          }}
+        />
 
         <div className="mb-4">
           <button
@@ -162,38 +145,44 @@ const DemandForecast: React.FC = () => {
           </ResponsiveContainer>
         </div>
 
+        {/* EOQ Results */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <h2 className="text-xl font-semibold mb-4">Supply Chain Optimization Results</h2>
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead>
-              <tr>
-                <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  SKU
-                </th>
-                <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  EOQ
-                </th>
-                <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Reorder Point
-                </th>
-                <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Total Lead Time
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {optimizationResults.map((result) => (
-                <tr key={result.skuName}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{result.skuName}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{result.EOQ.toFixed(2)}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{result.reorderPoint.toFixed(2)}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{result.totalLeadTime}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+  <h2 className="text-xl font-semibold mb-4">Supply Chain Optimization Results</h2>
+  <table className="min-w-full divide-y divide-gray-200">
+    <thead>
+      <tr>
+        <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          SKU
+        </th>
+        <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          EOQ
+        </th>
+        <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          Reorder Point
+        </th>
+        <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          Total Lead Time
+        </th>
+        <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          Minimum Stock Holding
+        </th>
+      </tr>
+    </thead>
+    <tbody className="bg-white divide-y divide-gray-200">
+      {optimizationResults.map((result) => (
+        <tr key={result.skuName}>
+          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{result.skuName}</td>
+          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{result.EOQ.toFixed(2)}</td>
+          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{result.reorderPoint.toFixed(2)}</td>
+          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{result.totalLeadTime}</td>
+          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{result.minStockHolding.toFixed(2)}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
 
+        {/* Display Recommendations */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <h2 className="text-xl font-semibold mb-4">Recommendations</h2>
           <ul className="list-disc pl-6">
