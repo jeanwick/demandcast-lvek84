@@ -4,10 +4,9 @@ import SKUAndLeadTimeManagement from './components/SKUAndLeadTimeManagement';
 import SupplyChainCosts from './components/SupplyChainCosts';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-// Define ForecastData with a specific 'month' as a string and SKU names as dynamic keys that hold numbers
 interface ForecastData {
   month: string;
-  [skuName: string]: number | string; // Allow 'month' as a string and SKU names as dynamic keys with number values
+  [skuName: string]: number | string;
 }
 
 interface OptimizationResult {
@@ -26,10 +25,10 @@ const DemandForecast: React.FC = () => {
   const [forecastConfig, setForecastConfig] = useState({
     sailingTime: 30,
     portDelays: 5,
-    forecastPeriods: 6, // Adjust the number of forecast periods based on configuration
+    forecastPeriods: 6,
   });
 
-  const [skuData, setSkuData] = useState<any[]>([]);  // SKU data will be an array of objects for each SKU
+  const [skuData, setSkuData] = useState<any[]>([]);
   const [supplyChainCosts, setSupplyChainCosts] = useState({
     transportCost: 1000,
     holdingCost: 500,
@@ -38,65 +37,46 @@ const DemandForecast: React.FC = () => {
 
   const [forecastData, setForecastData] = useState<ForecastData[]>([]);
 
-  // Handle generating the forecast with Exponential Smoothing
   const handleForecast = () => {
-    const forecastPeriods = forecastConfig.forecastPeriods;  // Get forecast periods from configuration
-
-    const alpha = 0.2; // Smoothing factor for Exponential Smoothing (between 0 and 1)
-
-    // Initialize an array of months, including future forecast periods
+    const forecastPeriods = forecastConfig.forecastPeriods;
+    const alpha = 0.2;
     const months = Array.from({ length: forecastPeriods }, (_, index) => `Month ${index + 1}`);
 
-    // Create forecast data structure where each object represents a month and contains the demand for each SKU
     const newForecastData: ForecastData[] = months.map((month, monthIndex) => {
-      const monthData: ForecastData = { month };  // 'month' is explicitly typed as a string
+      const monthData: ForecastData = { month };
 
-      // For each SKU, add its demand for the current month
       skuData.forEach((sku: any) => {
         if (sku.skuName && sku.historicalData) {
           if (sku.historicalData[monthIndex]) {
-            // Use user-entered demand for this SKU and month if available
             monthData[sku.skuName] = sku.historicalData[monthIndex].value;
           } else {
-            // Exponential smoothing logic for forecasting future periods
             const historicalData = sku.historicalData.map((data: { value: number }) => data.value);
-
-            // Initialize the first smoothed value using the first historical value
             let smoothedValue = historicalData[0];
             for (let i = 1; i < historicalData.length; i++) {
               smoothedValue = alpha * historicalData[i] + (1 - alpha) * smoothedValue;
             }
-
-            // Forecast the future period by using the last smoothed value
             smoothedValue = alpha * historicalData[historicalData.length - 1] + (1 - alpha) * smoothedValue;
-
             monthData[sku.skuName] = smoothedValue;
           }
-        } else {
-          console.warn('SKU without a name or demand data found:', sku);
         }
       });
 
       return monthData;
     });
 
-    setForecastData(newForecastData); // Update the state with the new forecast data
-    console.log('Generated Forecast Data:', newForecastData); // Log the forecast data for debugging
+    setForecastData(newForecastData);
   };
 
-  // Function to calculate Economic Order Quantity (EOQ), Reorder Point, and Total Lead Time
   const calculateOptimizationResults = (): OptimizationResult[] => {
     return skuData.map((sku: any) => {
-      const demandRate = sku.historicalData.reduce((total: number, entry: { value: number }) => total + entry.value, 0) / sku.historicalData.length; // Average demand rate
+      const demandRate = sku.historicalData.reduce((total: number, entry: { value: number }) => total + entry.value, 0) / sku.historicalData.length;
       const orderingCost = supplyChainCosts.orderCost;
       const holdingCost = supplyChainCosts.holdingCost;
 
-      // EOQ calculation
       const EOQ = Math.sqrt((2 * demandRate * orderingCost) / holdingCost);
 
-      // Reorder Point
-      const dailyDemandRate = demandRate / 30;  // Assuming 30 days per month
-      const totalLeadTime = forecastConfig.sailingTime + forecastConfig.portDelays + sku.leadTimeDays;
+      const dailyDemandRate = demandRate / 30;
+      const totalLeadTime = forecastConfig.sailingTime + forecastConfig.portDelays + sku.leadTimeDays; 
       const reorderPoint = dailyDemandRate * totalLeadTime;
 
       return {
@@ -108,26 +88,21 @@ const DemandForecast: React.FC = () => {
     });
   };
 
-  const optimizationResults = calculateOptimizationResults(); // Get optimization results
+  const optimizationResults = calculateOptimizationResults();
 
-  // Function to generate recommendations based on optimization results
   const generateRecommendations = (): Recommendation[] => {
     return optimizationResults.map((result) => {
       let recommendation = '';
-
-      // Stocking strategy based on EOQ
       if (result.EOQ > result.reorderPoint) {
         recommendation += `Consider placing larger orders to reduce the number of order cycles. `;
       } else {
         recommendation += `Consider placing smaller, more frequent orders to minimize holding costs. `;
       }
 
-      // Reorder timing
       if (result.reorderPoint > 0) {
         recommendation += `Ensure orders are placed before stock reaches the Reorder Point to avoid stockouts. `;
       }
 
-      // Lead time optimization
       if (result.totalLeadTime > 30) {
         recommendation += `Review supplier lead times and consider working with suppliers to reduce delays. `;
       }
@@ -139,7 +114,7 @@ const DemandForecast: React.FC = () => {
     });
   };
 
-  const recommendations = generateRecommendations(); // Get recommendations
+  const recommendations = generateRecommendations();
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -148,16 +123,10 @@ const DemandForecast: React.FC = () => {
           Demand Forecasting & Supply Chain Optimization
         </h1>
 
-        {/* SKU and Lead Time Management */}
         <SKUAndLeadTimeManagement onSkuDataChange={setSkuData} />
-
-        {/* Forecast Configuration Section */}
         <ForecastConfiguration onConfigChange={setForecastConfig} />
-
-        {/* Supply Chain Costs */}
         <SupplyChainCosts onCostsChange={setSupplyChainCosts} />
 
-        {/* Generate Forecast Button */}
         <div className="mb-4">
           <button
             onClick={handleForecast}
@@ -167,7 +136,6 @@ const DemandForecast: React.FC = () => {
           </button>
         </div>
 
-        {/* Forecasted Demand Graph */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <h2 className="text-xl font-semibold mb-4">Forecasted Demand per SKU</h2>
           <ResponsiveContainer width="100%" height={400}>
@@ -177,7 +145,6 @@ const DemandForecast: React.FC = () => {
               <YAxis />
               <Tooltip />
               <Legend />
-              {/* Generate a Line for each SKU */}
               {forecastData.length > 0 &&
                 Object.keys(forecastData[0])
                   .filter(key => key !== 'month')
@@ -185,9 +152,9 @@ const DemandForecast: React.FC = () => {
                     <Line
                       key={index}
                       type="monotone"
-                      dataKey={skuName}  // The SKU name as the data key for each Line
-                      name={skuName}  // Display the SKU name in the legend
-                      stroke={`#${Math.floor(Math.random() * 16777215).toString(16)}`}  // Random color for each line
+                      dataKey={skuName}
+                      name={skuName}
+                      stroke={`#${Math.floor(Math.random() * 16777215).toString(16)}`}
                       dot={false}
                     />
                   ))}
@@ -195,7 +162,6 @@ const DemandForecast: React.FC = () => {
           </ResponsiveContainer>
         </div>
 
-        {/* Supply Chain Optimization Results */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <h2 className="text-xl font-semibold mb-4">Supply Chain Optimization Results</h2>
           <table className="min-w-full divide-y divide-gray-200">
@@ -228,7 +194,6 @@ const DemandForecast: React.FC = () => {
           </table>
         </div>
 
-        {/* Recommendations */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <h2 className="text-xl font-semibold mb-4">Recommendations</h2>
           <ul className="list-disc pl-6">

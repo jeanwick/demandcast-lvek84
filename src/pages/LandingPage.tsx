@@ -6,6 +6,7 @@ import Features from '../landingpagecomponents/features';
 import NavigationBar from '../nav';
 import CallToAction from '../landingpagecomponents/calltoaction';
 import DemandForecast from '../demandforecast';
+import React from 'react';
 
 const LandingPage = () => {
   const [showDemandForecast, setShowDemandForecast] = useState(false);
