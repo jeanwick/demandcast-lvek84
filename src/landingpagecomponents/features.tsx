@@ -1,6 +1,6 @@
 import React from 'react';
 import { BarChart2, Anchor, Clock, Box } from 'lucide-react';
-import FeatureCard from './featurecard'; // Adjust path as needed
+import FeatureCard from '../featurecard'; // Adjust path as needed
 
 
 const Features: React.FC = () => {

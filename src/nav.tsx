@@ -23,7 +23,7 @@ const NavigationBar: React.FC<NavigationBarProps> = ({ toggleDemandForecast, sho
             <a href="#features" className="text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-blue-500">Features</a>
             <a href="#how-it-works" className="text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-blue-500">How It Works</a>
             <a href="#pricing" className="text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-blue-500">Pricing</a>
-            <a href="#aboutus" className="text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-blue-500">About us</a>
+            <a href="#contactus" className="text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-blue-500">Contact us</a>
           </div>
           <div className="hidden sm:ml-6 sm:flex sm:items-center">
             <button 
@@ -49,7 +49,7 @@ const NavigationBar: React.FC<NavigationBarProps> = ({ toggleDemandForecast, sho
             <a href="#features" className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800">Features</a>
             <a href="#how-it-works" className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800">How It Works</a>
             <a href="#pricing" className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800">Pricing</a>
-            <a href="#aboutus" className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800">About us</a>
+            <a href="#contactus" className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800">Contact us</a>
           </div>
         </div>
       )}
