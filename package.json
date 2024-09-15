@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "arima": "^0.2.5",
     "axios": "^1.7.7",
     "file-saver": "^2.0.5",
     "lucide-react": "^0.438.0",

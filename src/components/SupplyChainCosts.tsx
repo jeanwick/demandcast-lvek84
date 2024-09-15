@@ -16,11 +16,11 @@ const SupplyChainCosts: React.FC<SupplyChainCostsProps> = ({ onCostsChange }) =>
   return (
     <div className="mb-6">
       <div className="bg-white shadow-md rounded-lg p-6">
-        <h2 className="text-2xl font-bold mb-6 text-gray-800">Supply Chain Costs</h2>
+        <h2 className="text-2xl font-bold mb-6 text-gray-800">Supply Chain Costs (ZAR)</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
             <label htmlFor="transportCost" className="block text-sm font-medium text-gray-700">
-              Transport Cost
+              Transport Cost (R)
             </label>
             <input
               type="number"
@@ -32,7 +32,7 @@ const SupplyChainCosts: React.FC<SupplyChainCostsProps> = ({ onCostsChange }) =>
           </div>
           <div>
             <label htmlFor="holdingCost" className="block text-sm font-medium text-gray-700">
-              Holding Cost
+              Holding Cost (R)
             </label>
             <input
               type="number"
@@ -44,7 +44,7 @@ const SupplyChainCosts: React.FC<SupplyChainCostsProps> = ({ onCostsChange }) =>
           </div>
           <div>
             <label htmlFor="orderCost" className="block text-sm font-medium text-gray-700">
-              Order Cost
+              Order Cost (R)
             </label>
             <input
               type="number"

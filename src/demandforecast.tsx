@@ -1,9 +1,20 @@
-import React, { useState } from 'react';
+// src/DemandForecast.tsx
+import React, { useState, useEffect } from 'react';
 import ForecastConfiguration from './components/ForecastConfiguration';
 import SKUAndLeadTimeManagement from './components/SKUAndLeadTimeManagement';
 import SupplyChainCosts from './components/SupplyChainCosts';
-import EOQCalculator from './components/EOQCalculator'; // Import the EOQ calculator
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import EOQCalculator from './components/EOQCalculator';
+import ARIMAForecast from './components/ARIMAForecast';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
 
 interface ForecastData {
   month: string;
@@ -29,38 +40,28 @@ const DemandForecast: React.FC = () => {
     orderCost: 200,
   });
 
-  const [forecastData, setForecastData] = useState<ForecastData[]>([]);
+  const [forecastData, setForecastData] = useState<any[]>([]);
+  const [crossValidationResults, setCrossValidationResults] = useState<any[]>([]);
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [optimizationResults, setOptimizationResults] = useState<any[]>([]);
 
-  const handleForecast = () => {
-    const forecastPeriods = forecastConfig.forecastPeriods;
-    const alpha = 0.2;
-    const months = Array.from({ length: forecastPeriods }, (_, index) => `Month ${index + 1}`);
+  // Update forecastConfig when port delays change
+  const handleConfigChange = (config: { sailingTime: number; portDelays: number; forecastPeriods: number }) => {
+    setForecastConfig(config);
+  };
 
-    const newForecastData: ForecastData[] = months.map((month, monthIndex) => {
-      const monthData: ForecastData = { month };
+  // Reset cross-validation results when skuData changes
+  useEffect(() => {
+    setCrossValidationResults([]);
+  }, [skuData]);
 
-      skuData.forEach((sku: any) => {
-        if (sku.skuName && sku.historicalData) {
-          if (sku.historicalData[monthIndex]) {
-            monthData[sku.skuName] = sku.historicalData[monthIndex].value;
-          } else {
-            const historicalData = sku.historicalData.map((data: { value: number }) => data.value);
-            let smoothedValue = historicalData[0];
-            for (let i = 1; i < historicalData.length; i++) {
-              smoothedValue = alpha * historicalData[i] + (1 - alpha) * smoothedValue;
-            }
-            smoothedValue = alpha * historicalData[historicalData.length - 1] + (1 - alpha) * smoothedValue;
-            monthData[sku.skuName] = smoothedValue;
-          }
-        }
-      });
+  const handleForecastData = (data: any) => {
+    console.log('Received forecast data:', data);
+    setForecastData(data);
+  };
 
-      return monthData;
-    });
-
-    setForecastData(newForecastData);
+  const handleCrossValidationResult = (result: any) => {
+    setCrossValidationResults((prev) => [...prev, result]);
   };
 
   const generateRecommendations = (optimizationResults: any[]): Recommendation[] => {
@@ -88,6 +89,9 @@ const DemandForecast: React.FC = () => {
     });
   };
 
+  console.log('Forecast Config:', forecastConfig);
+  console.log('Forecast Data Length:', forecastData.length);
+
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
@@ -96,7 +100,7 @@ const DemandForecast: React.FC = () => {
         </h1>
 
         <SKUAndLeadTimeManagement onSkuDataChange={setSkuData} />
-        <ForecastConfiguration onConfigChange={setForecastConfig} />
+        <ForecastConfiguration onConfigChange={handleConfigChange} />
         <SupplyChainCosts onCostsChange={setSupplyChainCosts} />
 
         {/* EOQ Calculator */}
@@ -110,15 +114,15 @@ const DemandForecast: React.FC = () => {
           }}
         />
 
-        <div className="mb-4">
-          <button
-            onClick={handleForecast}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-          >
-            Generate Forecast
-          </button>
-        </div>
+        {/* ARIMA Forecast and Cross-Validation */}
+        <ARIMAForecast
+          skuData={skuData}
+          forecastPeriods={forecastConfig.forecastPeriods}
+          onForecastData={handleForecastData}
+          onCrossValidationResult={handleCrossValidationResult}
+        />
 
+        {/* Forecast Graph */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <h2 className="text-xl font-semibold mb-4">Forecasted Demand per SKU</h2>
           <ResponsiveContainer width="100%" height={400}>
@@ -130,7 +134,7 @@ const DemandForecast: React.FC = () => {
               <Legend />
               {forecastData.length > 0 &&
                 Object.keys(forecastData[0])
-                  .filter(key => key !== 'month')
+                  .filter((key) => key !== 'month')
                   .map((skuName, index) => (
                     <Line
                       key={index}
@@ -145,44 +149,67 @@ const DemandForecast: React.FC = () => {
           </ResponsiveContainer>
         </div>
 
+        {/* Cross-Validation Results */}
+        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+          <h2 className="text-xl font-semibold mb-4">Cross-Validation Results</h2>
+          <ul>
+            {crossValidationResults.map((result, index) => (
+              <li key={index}>
+                <strong>SKU:</strong> {result.skuName}, <strong>Average Error:</strong>{' '}
+                {result.averageError.toFixed(2)}
+              </li>
+            ))}
+          </ul>
+        </div>
+
         {/* EOQ Results */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-  <h2 className="text-xl font-semibold mb-4">Supply Chain Optimization Results</h2>
-  <table className="min-w-full divide-y divide-gray-200">
-    <thead>
-      <tr>
-        <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-          SKU
-        </th>
-        <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-          EOQ
-        </th>
-        <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-          Reorder Point
-        </th>
-        <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-          Total Lead Time
-        </th>
-        <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-          Minimum Stock Holding
-        </th>
-      </tr>
-    </thead>
-    <tbody className="bg-white divide-y divide-gray-200">
-      {optimizationResults.map((result) => (
-        <tr key={result.skuName}>
-          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{result.skuName}</td>
-          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{result.EOQ.toFixed(2)}</td>
-          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{result.reorderPoint.toFixed(2)}</td>
-          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{result.totalLeadTime}</td>
-          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{result.minStockHolding.toFixed(2)}</td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-</div>
+          <h2 className="text-xl font-semibold mb-4">Supply Chain Optimization Results</h2>
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead>
+              <tr>
+                <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  SKU
+                </th>
+                <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  EOQ
+                </th>
+                <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Reorder Point
+                </th>
+                <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Total Lead Time
+                </th>
+                <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Minimum Stock Holding
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {optimizationResults.map((result) => (
+                <tr key={result.skuName}>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {result.skuName}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {result.EOQ.toFixed(2)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {result.reorderPoint.toFixed(2)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {result.totalLeadTime}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {result.minStockHolding.toFixed(2)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
-        {/* Display Recommendations */}
+        {/* Recommendations */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <h2 className="text-xl font-semibold mb-4">Recommendations</h2>
           <ul className="list-disc pl-6">
