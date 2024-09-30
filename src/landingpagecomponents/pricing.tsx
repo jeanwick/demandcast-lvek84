@@ -12,7 +12,7 @@ const Pricing: React.FC<PricingProps> = ({ toggleDemandForecast }) => {
         {/* Professional Plan */}
         <div className="bg-white rounded-lg shadow-md p-8 w-full max-w-md">
           <h3 className="text-2xl font-semibold text-center mb-4">Professional Plan</h3>
-          <p className="text-4xl font-bold text-center text-gray-900 mb-6">R2,500 <span className="text-xl font-normal text-gray-600">/month</span></p>
+          <p className="text-4xl font-bold text-center text-gray-900 mb-6">R12,500 <span className="text-xl font-normal text-gray-600">/month</span></p>
           <ul className="text-gray-600 mb-8">
             <li className="mb-2">✓ Full access to all features</li>
             <li className="mb-2">✓ Unlimited forecasts</li>
@@ -53,3 +53,4 @@ const Pricing: React.FC<PricingProps> = ({ toggleDemandForecast }) => {
 };
 
 export default Pricing;
+//test
