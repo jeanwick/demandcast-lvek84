@@ -15,6 +15,8 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+import ExcelUpload from './components/ExcelUpload';
+
 
 interface ForecastData {
   month: string;
@@ -194,6 +196,7 @@ const DemandForecast: React.FC = () => {
         </h1>
 
         <SKUAndLeadTimeManagement onSkuDataChange={setSkuData} />
+        <ExcelUpload />
         <ForecastConfiguration onConfigChange={handleConfigChange} />
         <SupplyChainCosts onCostsChange={setSupplyChainCosts} />
 
