@@ -6,10 +6,11 @@ import Features from '../landingpagecomponents/features';
 import NavigationBar from '../nav';
 import CallToAction from '../landingpagecomponents/calltoaction';
 import DemandForecast from '../demandforecast';
-// import React from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
 
 const LandingPage = () => {
   const [showDemandForecast, setShowDemandForecast] = useState(false);
+  const { loginWithRedirect } = useAuth0();
 
   const toggleDemandForecast = () => {
     setShowDemandForecast(!showDemandForecast);
@@ -47,10 +48,10 @@ const LandingPage = () => {
               <div className="mt-5 max-w-md mx-auto sm:flex sm:justify-center md:mt-8">
                 <div className="rounded-md shadow">
                   <button 
-                    onClick={toggleDemandForecast}
+                    onClick={() => loginWithRedirect()}
                     className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-500 hover:bg-blue-600 md:py-4 md:text-lg md:px-10"
                   >
-                    Get Started
+                    Start Free Trial
                   </button>
                 </div>
               </div>

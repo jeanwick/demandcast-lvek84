@@ -31,6 +31,7 @@ const ForecastConfiguration: React.FC<ForecastConfigurationProps> = ({ onConfigC
   const [port, setPort] = useState<PortCode | "">("");  // Initialize with an empty string
   const [congestionData, setCongestionData] = useState<any>(null);
   const [apiData, setApiData] = useState<any>(null);
+  const [totalLeadTime, setTotalLeadTime] = useState<number>(0);  // New state for total lead time
 
   // Fetch congestion data from API when port changes
   useEffect(() => {
@@ -74,6 +75,11 @@ const ForecastConfiguration: React.FC<ForecastConfigurationProps> = ({ onConfigC
         portDelays: averageDelays,
         forecastPeriods
       });
+
+      // Calculate total lead time
+      const leadTime = sailingTime + averageDelays;
+      setTotalLeadTime(leadTime);  // Updated total lead time calculation
+
     } else {
       setPortDelays(0);
       setCongestionData(null);
@@ -147,13 +153,20 @@ const ForecastConfiguration: React.FC<ForecastConfigurationProps> = ({ onConfigC
 
         {/* Display API Data */}
         {apiData && (
-          <div className="mt-8">
-            <h3 className="text-xl font-bold mb-4">API Congestion Data for {port}</h3>
-            <ul className="list-disc ml-6">
-              <li><strong>Congestion (%):</strong> {apiData.congestion}</li>
-              <li><strong>Gap with Mean:</strong> {apiData.gapWithMean}</li>
-            </ul>
-          </div>
+        <div className="mt-8">
+        <h3 className="text-xl font-bold mb-4 tooltip">
+          Predicted Congestion Data for {port}
+          <span className="tooltiptext">
+            Port Congestion is the expected delay your shipment’s vessel may face upon arriving at this port, considering congestion and vessel queues. Calculation based on live shipments recorded in the last 7 days. <br />
+            <strong>Also known as:</strong> Vessel waiting, Vessel Dwell, and Wait time before berthing.
+          </span>
+        </h3>
+        <ul className="list-disc ml-6">
+          <li><strong>Congestion (%):</strong> {apiData.congestion}</li>
+          <li><strong>Gap with Mean:</strong> {apiData.gapWithMean}</li>
+          <li><strong>Total Lead Time (Sailing + Port Delays) (Days):</strong> {totalLeadTime}</li>
+        </ul>
+      </div>
         )}
       </div>
     </div>
