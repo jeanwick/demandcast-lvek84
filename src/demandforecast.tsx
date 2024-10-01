@@ -1,4 +1,3 @@
-// DemandForecast.tsx
 import React, { useState, useEffect, useCallback } from 'react';
 import ForecastConfiguration from './components/ForecastConfiguration';
 import SKUAndLeadTimeManagement from './components/SKUAndLeadTimeManagement';
@@ -16,7 +15,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import ExcelUpload from './components/ExcelUpload';
-
+import AuthenticatedNavigationBar from './authnav';  // Import the new authenticated nav bar
 
 interface ForecastData {
   month: string;
@@ -190,6 +189,9 @@ const DemandForecast: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      {/* Add the authenticated navigation bar */}
+      <AuthenticatedNavigationBar /> 
+
       <div className="max-w-7xl mx-auto">
         <h1 className="text-3xl font-extrabold text-gray-900 text-center mb-8">
           Demand Forecasting & Supply Chain Optimization
