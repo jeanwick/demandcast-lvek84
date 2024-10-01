@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { BarChart2, Menu, X } from 'lucide-react';
+import { useAuth0 } from '@auth0/auth0-react';  // Import Auth0 hooks
 
 interface NavigationBarProps {
   toggleDemandForecast: () => void;
@@ -8,6 +9,9 @@ interface NavigationBarProps {
 
 const NavigationBar: React.FC<NavigationBarProps> = ({ toggleDemandForecast, showDemandForecast }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  
+  // Use the Auth0 hook for logging out
+  const { isAuthenticated, logout } = useAuth0();  // Destructure the logout method and authentication state
 
   return (
     <nav className="bg-white shadow-md">
@@ -33,6 +37,19 @@ const NavigationBar: React.FC<NavigationBarProps> = ({ toggleDemandForecast, sho
               {showDemandForecast ? 'Back to Landing' : 'Get Started'}
             </button>
           </div>
+
+          {/* Add a Logout Button if the user is authenticated */}
+          {isAuthenticated && (
+            <div className="hidden sm:ml-6 sm:flex sm:items-center">
+              <button
+                onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}  // Corrected: Using logoutParams
+                className="bg-red-500 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+              >
+                Log Out
+              </button>
+            </div>
+          )}
+
           <div className="-mr-2 flex items-center sm:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -51,6 +68,18 @@ const NavigationBar: React.FC<NavigationBarProps> = ({ toggleDemandForecast, sho
             <a href="#pricing" className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800">Pricing</a>
             <a href="#contactus" className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800">Contact us</a>
           </div>
+
+          {/* Add Logout to mobile menu */}
+          {isAuthenticated && (
+            <div className="pt-2 pb-3 space-y-1">
+              <button
+                onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
+                className="block w-full pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-red-600 hover:bg-red-50 hover:border-red-300 hover:text-red-800"
+              >
+                Log Out
+              </button>
+            </div>
+          )}
         </div>
       )}
     </nav>

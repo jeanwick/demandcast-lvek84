@@ -6,10 +6,11 @@ import './index.css';
 
 // This function will handle where the user should be redirected after login
 const onRedirectCallback = (appState?: any) => {
+  // Redirect the user to where they were before login, or to /demandforecast by default
   window.history.replaceState(
     {},
     document.title,
-    appState?.returnTo || window.location.pathname
+    appState?.returnTo || '/demandforecast'  // Default to /demandforecast if no returnTo value exists
   );
 };
 
@@ -18,11 +19,11 @@ createRoot(document.getElementById('root')!).render(
     domain="dev-5kd8usx4erhfbios.jp.auth0.com"
     clientId="znCozKtsm8xj9cga8M1kpOb7UpFJtNX5"
     authorizationParams={{
-      redirect_uri: window.location.origin + '/callback',   // window.location.origin should be enough
-      // Optionally add scope if needed
-      scope: 'openid profile email',  // Basic scope needed for user profile
+      redirect_uri: window.location.origin + '/callback',  // Make sure this matches the Vercel app's URL
+      // audience: "demandcastauth", // Replace with your API Audience
+      scope: 'openid profile email',  // Request basic scopes (adjust as needed)
     }}
-    onRedirectCallback={onRedirectCallback}
+    onRedirectCallback={onRedirectCallback}  // Handle redirection after login
   >
     <React.StrictMode>
       <App />
