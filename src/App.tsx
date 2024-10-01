@@ -30,7 +30,7 @@ const App: React.FC = () => {
 
         {/* Protected Route: Demand Forecast */}
         <Route
-          path="/demandforecast"
+          path="/demandforecast" 
           element={
             <RequireAuth>
               <DemandForecast />

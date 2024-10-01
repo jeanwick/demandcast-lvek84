@@ -1,21 +1,31 @@
-import { StrictMode } from 'react';
+import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { Auth0Provider } from '@auth0/auth0-react';
 import App from './App.tsx';
 import './index.css';
+
+// This function will handle where the user should be redirected after login
+const onRedirectCallback = (appState?: any) => {
+  window.history.replaceState(
+    {},
+    document.title,
+    appState?.returnTo || window.location.pathname
+  );
+};
 
 createRoot(document.getElementById('root')!).render(
   <Auth0Provider
     domain="dev-5kd8usx4erhfbios.jp.auth0.com"
     clientId="znCozKtsm8xj9cga8M1kpOb7UpFJtNX5"
     authorizationParams={{
-      redirect_uri: window.location.origin
+      redirect_uri: window.location.origin,  // window.location.origin should be enough
+      // Optionally add scope if needed
+      scope: 'openid profile email',  // Basic scope needed for user profile
     }}
-    audience="https://dev-5kd8usx4erhfbios.jp.auth0.com/api/v2/" // Update this if needed
-    scope="read:current_user update:current_user_metadata"
+    onRedirectCallback={onRedirectCallback}
   >
-    <StrictMode>
+    <React.StrictMode>
       <App />
-    </StrictMode>
+    </React.StrictMode>
   </Auth0Provider>
 );
