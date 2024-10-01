@@ -18,7 +18,7 @@ createRoot(document.getElementById('root')!).render(
     domain="dev-5kd8usx4erhfbios.jp.auth0.com"
     clientId="znCozKtsm8xj9cga8M1kpOb7UpFJtNX5"
     authorizationParams={{
-      redirect_uri: window.location.origin,  // window.location.origin should be enough
+      redirect_uri: window.location.origin + '/callback',   // window.location.origin should be enough
       // Optionally add scope if needed
       scope: 'openid profile email',  // Basic scope needed for user profile
     }}
